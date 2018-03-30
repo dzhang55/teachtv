@@ -1,6 +1,6 @@
-package com.karinnaloo.homegathering.adt;
+package com.karinnaloo.teachtv.adt;
 
-import com.karinnaloo.homegathering.util.Constants;
+import com.karinnaloo.teachtv.util.Constants;
 
 /**
  * Created by GleasonK on 7/31/15.

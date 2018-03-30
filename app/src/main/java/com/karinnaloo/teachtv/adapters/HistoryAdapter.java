@@ -1,4 +1,4 @@
-package com.karinnaloo.homegathering.adapters;
+package com.karinnaloo.teachtv.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -25,11 +25,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.karinnaloo.homegathering.MainActivity;
-import com.karinnaloo.homegathering.R;
-import com.karinnaloo.homegathering.adt.ChatUser;
-import com.karinnaloo.homegathering.adt.HistoryItem;
-import com.karinnaloo.homegathering.util.Constants;
+import com.karinnaloo.teachtv.MainActivity;
+import com.karinnaloo.teachtv.R;
+import com.karinnaloo.teachtv.adt.ChatUser;
+import com.karinnaloo.teachtv.adt.HistoryItem;
+import com.karinnaloo.teachtv.util.Constants;
 
 /**
  * Created by GleasonK on 7/31/15.

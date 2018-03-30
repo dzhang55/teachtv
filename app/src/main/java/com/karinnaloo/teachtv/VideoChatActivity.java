@@ -1,4 +1,4 @@
-package com.karinnaloo.homegathering;
+package com.karinnaloo.teachtv;
 
 import android.app.Activity;
 import android.app.ListActivity;
@@ -38,11 +38,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import com.karinnaloo.homegathering.adapters.ChatAdapter;
-import com.karinnaloo.homegathering.adt.ChatMessage;
-import com.karinnaloo.homegathering.servers.XirSysRequest;
-import com.karinnaloo.homegathering.util.Constants;
-import com.karinnaloo.homegathering.util.LogRTCListener;
+import com.karinnaloo.teachtv.adapters.ChatAdapter;
+import com.karinnaloo.teachtv.adt.ChatMessage;
+import com.karinnaloo.teachtv.servers.XirSysRequest;
+import com.karinnaloo.teachtv.util.Constants;
+import com.karinnaloo.teachtv.util.LogRTCListener;
 import pnwebrtc.PnPeer;
 import pnwebrtc.PnRTCClient;
 import pnwebrtc.PnSignalingParams;

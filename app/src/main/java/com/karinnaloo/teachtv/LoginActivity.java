@@ -1,4 +1,4 @@
-package com.karinnaloo.homegathering;
+package com.karinnaloo.teachtv;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
-import com.karinnaloo.homegathering.util.Constants;
+import com.karinnaloo.teachtv.util.Constants;
 
 /**
  * Login Activity for the first time the app is opened, or when a user clicks the sign out button.

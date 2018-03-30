@@ -1,4 +1,4 @@
-package com.karinnaloo.homegathering;
+package com.karinnaloo.teachtv;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

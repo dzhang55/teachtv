@@ -1,4 +1,4 @@
-package com.karinnaloo.homegathering;
+package com.karinnaloo.teachtv;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -23,9 +23,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import com.karinnaloo.homegathering.adapters.HistoryAdapter;
-import com.karinnaloo.homegathering.adt.HistoryItem;
-import com.karinnaloo.homegathering.util.Constants;
+import com.karinnaloo.teachtv.adapters.HistoryAdapter;
+import com.karinnaloo.teachtv.adt.HistoryItem;
+import com.karinnaloo.teachtv.util.Constants;
 
 
 public class MainActivity extends ListActivity {

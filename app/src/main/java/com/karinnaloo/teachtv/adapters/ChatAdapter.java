@@ -1,4 +1,4 @@
-package com.karinnaloo.homegathering.adapters;
+package com.karinnaloo.teachtv.adapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -16,8 +16,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
-import com.karinnaloo.homegathering.R;
-import com.karinnaloo.homegathering.adt.ChatMessage;
+import com.karinnaloo.teachtv.R;
+import com.karinnaloo.teachtv.adt.ChatMessage;
 
 
 /**

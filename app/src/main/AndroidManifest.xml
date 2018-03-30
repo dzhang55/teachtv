@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.karinnaloo.homegathering" >
+    package="com.karinnaloo.teachtv" >
 
     <!-- WebRTC Dependencies -->
     <uses-feature android:name="android.hardware.camera" />
@@ -27,7 +27,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.karinnaloo.homegathering.MainActivity"
+            android:name="com.karinnaloo.teachtv.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,21 +36,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.karinnaloo.homegathering.VideoChatActivity"
+            android:name="com.karinnaloo.teachtv.VideoChatActivity"
             android:label="@string/title_activity_video_chat"
-            android:parentActivityName="com.karinnaloo.homegathering.MainActivity"
+            android:parentActivityName="com.karinnaloo.teachtv.MainActivity"
             android:windowSoftInputMode="stateHidden"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.karinnaloo.homegathering.MainActivity" />
+                android:value="com.karinnaloo.teachtv.MainActivity" />
         </activity>
         <activity
-            android:name="com.karinnaloo.homegathering.IncomingCallActivity"
+            android:name="com.karinnaloo.teachtv.IncomingCallActivity"
             android:label="@string/title_activity_incoming_call">
         </activity>
         <activity
-            android:name="com.karinnaloo.homegathering.LoginActivity"
+            android:name="com.karinnaloo.teachtv.LoginActivity"
             android:label="@string/title_activity_login" >
         </activity>
     </application>

@@ -1,4 +1,4 @@
-package com.karinnaloo.homegathering;
+package com.karinnaloo.teachtv;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,7 +16,7 @@ import com.pubnub.api.Pubnub;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.karinnaloo.homegathering.util.Constants;
+import com.karinnaloo.teachtv.util.Constants;
 import pnwebrtc.PnPeerConnectionClient;
 
 

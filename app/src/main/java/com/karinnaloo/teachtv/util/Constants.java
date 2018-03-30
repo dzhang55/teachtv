@@ -1,4 +1,4 @@
-package com.karinnaloo.homegathering.util;
+package com.karinnaloo.teachtv.util;
 
 /**
  * Created by GleasonK on 7/30/15.

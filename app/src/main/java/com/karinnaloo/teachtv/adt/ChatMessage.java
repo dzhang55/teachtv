@@ -1,4 +1,4 @@
-package com.karinnaloo.homegathering.adt;
+package com.karinnaloo.teachtv.adt;
 
 /**
  * Created by GleasonK on 6/25/15.

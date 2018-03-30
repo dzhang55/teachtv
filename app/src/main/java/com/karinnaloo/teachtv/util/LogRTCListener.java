@@ -1,4 +1,4 @@
-package com.karinnaloo.homegathering.util;
+package com.karinnaloo.teachtv.util;
 
 import android.util.Log;
 
