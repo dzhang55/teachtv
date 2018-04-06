@@ -43,9 +43,9 @@ import com.karinnaloo.teachtv.adt.ChatMessage;
 import com.karinnaloo.teachtv.servers.XirSysRequest;
 import com.karinnaloo.teachtv.util.Constants;
 import com.karinnaloo.teachtv.util.LogRTCListener;
-import pnwebrtc.PnPeer;
-import pnwebrtc.PnRTCClient;
-import pnwebrtc.PnSignalingParams;
+import me.kevingleason.pnwebrtc.PnPeer;
+import me.kevingleason.pnwebrtc.PnRTCClient;
+import me.kevingleason.pnwebrtc.PnSignalingParams;
 
 /**
  * This chat will begin/subscribe to a video chat.
@@ -100,7 +100,7 @@ public class VideoChatActivity extends ListActivity {
                 this,  // Context
                 true,  // Audio Enabled
                 true,  // Video Enabled
-                true,  // Hardware Acceleration Enabled
+                true, // Hardware Acceleration Enabled
                 null); // Render EGL Context
 
         PeerConnectionFactory pcFactory = new PeerConnectionFactory();

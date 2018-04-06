@@ -1,4 +1,4 @@
-package pnwebrtc;
+package me.kevingleason.pnwebrtc;
 
 import org.webrtc.MediaConstraints;
 import org.webrtc.PeerConnection;

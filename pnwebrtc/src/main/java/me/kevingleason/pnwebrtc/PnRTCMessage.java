@@ -1,4 +1,4 @@
-package pnwebrtc;
+package me.kevingleason.pnwebrtc;
 
 import org.json.JSONException;
 import org.json.JSONObject;
