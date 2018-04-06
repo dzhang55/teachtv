@@ -1,4 +1,4 @@
-package pnwebrtc;
+package me.kevingleason.pnwebrtc;
 
 
 import com.pubnub.api.Pubnub;
@@ -58,7 +58,7 @@ public class PnRTCClient {
     }
 
     /**
-     * Return the {@link pnwebrtc.PnRTCClient} peer connection constraints.
+     * Return the {@link PnRTCClient} peer connection constraints.
      * @return Peer Connection Constrains
      */
     public MediaConstraints pcConstraints() {
@@ -66,7 +66,7 @@ public class PnRTCClient {
     }
 
     /**
-     * Return the {@link pnwebrtc.PnRTCClient} video constraints.
+     * Return the {@link PnRTCClient} video constraints.
      * @return Video Constrains
      */
     public MediaConstraints videoConstraints() {
@@ -74,7 +74,7 @@ public class PnRTCClient {
     }
 
     /**
-     * Return the {@link pnwebrtc.PnRTCClient} audio constraints.
+     * Return the {@link PnRTCClient} audio constraints.
      * @return Audio Constrains
      */
     public MediaConstraints audioConstraints() {
@@ -82,7 +82,7 @@ public class PnRTCClient {
     }
 
     /**
-     * Return the {@link pnwebrtc.PnRTCClient} Pubnub instance.
+     * Return the {@link PnRTCClient} Pubnub instance.
      * @return The PnRTCClient's {@link com.pubnub.api.Pubnub} instance
      */
     public Pubnub getPubNub(){
@@ -90,7 +90,7 @@ public class PnRTCClient {
     }
 
     /**
-     * Return the UUID (username) of the {@link pnwebrtc.PnRTCClient}. If not
+     * Return the UUID (username) of the {@link PnRTCClient}. If not
      *   provided by the constructor, a random phone number is generated and can be retrieived
      *   with this method
      * @return The UUID username of the client

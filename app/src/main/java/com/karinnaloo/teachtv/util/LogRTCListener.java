@@ -4,9 +4,9 @@ import android.util.Log;
 
 import org.webrtc.MediaStream;
 
-import pnwebrtc.PnPeer;
-import pnwebrtc.PnRTCListener;
-import pnwebrtc.PnRTCMessage;
+import me.kevingleason.pnwebrtc.PnPeer;
+import me.kevingleason.pnwebrtc.PnRTCListener;
+import me.kevingleason.pnwebrtc.PnRTCMessage;
 
 /**
  * <p>Created by GleasonK on 7/23/15.</p>
