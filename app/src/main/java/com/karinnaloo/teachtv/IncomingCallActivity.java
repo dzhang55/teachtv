@@ -13,7 +13,6 @@ import android.widget.Toast;
 import com.pubnub.api.Callback;
 import com.pubnub.api.Pubnub;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.karinnaloo.teachtv.util.Constants;
@@ -83,7 +82,7 @@ public class IncomingCallActivity extends Activity {
     }
 
     public void acceptCall(View view){
-        Intent intent = new Intent(IncomingCallActivity.this, VideoChatActivity.class);
+        Intent intent = new Intent(IncomingCallActivity.this, TeacherClassroomActivity.class);
         intent.putExtra(Constants.USER_NAME, this.username);
         intent.putExtra(Constants.CALL_USER, this.callUser);
         startActivity(intent);

@@ -36,7 +36,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.karinnaloo.teachtv.VideoChatActivity"
+            android:name="com.karinnaloo.teachtv.TeacherClassroomActivity"
             android:label="@string/title_activity_video_chat"
             android:parentActivityName="com.karinnaloo.teachtv.MainActivity"
             android:windowSoftInputMode="stateHidden"

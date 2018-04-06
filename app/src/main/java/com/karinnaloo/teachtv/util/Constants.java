@@ -6,6 +6,7 @@ package com.karinnaloo.teachtv.util;
 public class Constants {
     public static final String SHARED_PREFS = "me.kg.androidrtc.SHARED_PREFS";
     public static final String USER_NAME    = "me.kg.androidrtc.SHARED_PREFS.USER_NAME";
+    public static final String CLASSROOM_NAME    = "me.kg.androidrtc.SHARED_PREFS.CLASSROOM_NAME";
     public static final String CALL_USER    = "me.kg.androidrtc.SHARED_PREFS.CALL_USER";
     public static final String STDBY_SUFFIX = "-stdby";
 

@@ -1,12 +1,10 @@
 package com.karinnaloo.teachtv;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,11 +16,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.karinnaloo.teachtv.adapters.ChatAdapter;
+import com.karinnaloo.teachtv.adt.ChatMessage;
+import com.karinnaloo.teachtv.servers.XirSysRequest;
+import com.karinnaloo.teachtv.util.Constants;
+import com.karinnaloo.teachtv.util.LogRTCListener;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.webrtc.AudioSource;
 import org.webrtc.AudioTrack;
-import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
@@ -38,11 +41,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import com.karinnaloo.teachtv.adapters.ChatAdapter;
-import com.karinnaloo.teachtv.adt.ChatMessage;
-import com.karinnaloo.teachtv.servers.XirSysRequest;
-import com.karinnaloo.teachtv.util.Constants;
-import com.karinnaloo.teachtv.util.LogRTCListener;
 import me.kevingleason.pnwebrtc.PnPeer;
 import me.kevingleason.pnwebrtc.PnRTCClient;
 import me.kevingleason.pnwebrtc.PnSignalingParams;
@@ -51,7 +49,7 @@ import me.kevingleason.pnwebrtc.PnSignalingParams;
  * This chat will begin/subscribe to a video chat.
  * REQUIRED: The intent must contain a
  */
-public class VideoChatActivity extends ListActivity {
+public class StudentClassroomActivity extends ListActivity {
     public static final String VIDEO_TRACK_ID = "videoPN";
     public static final String AUDIO_TRACK_ID = "audioPN";
     public static final String LOCAL_MEDIA_STREAM_ID = "localStreamPN";
@@ -80,7 +78,7 @@ public class VideoChatActivity extends ListActivity {
         if (extras == null || !extras.containsKey(Constants.USER_NAME)) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
-            Toast.makeText(this, "Need to pass username to VideoChatActivity in intent extras (Constants.USER_NAME).",
+            Toast.makeText(this, "Need to pass username to TeacherClassroomActivity in intent extras (Constants.USER_NAME).",
                     Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -256,7 +254,7 @@ public class VideoChatActivity extends ListActivity {
     }
 
     private void endCall() {
-        startActivity(new Intent(VideoChatActivity.this, MainActivity.class));
+        startActivity(new Intent(StudentClassroomActivity.this, MainActivity.class));
         finish();
     }
 
@@ -292,7 +290,7 @@ public class VideoChatActivity extends ListActivity {
         @Override
         public void onLocalStream(final MediaStream localStream) {
             super.onLocalStream(localStream); // Will log values
-            VideoChatActivity.this.runOnUiThread(new Runnable() {
+            StudentClassroomActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if(localStream.videoTracks.size()==0) return;
@@ -304,10 +302,10 @@ public class VideoChatActivity extends ListActivity {
         @Override
         public void onAddRemoteStream(final MediaStream remoteStream, final PnPeer peer) {
             super.onAddRemoteStream(remoteStream, peer); // Will log values
-            VideoChatActivity.this.runOnUiThread(new Runnable() {
+            StudentClassroomActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(VideoChatActivity.this,"Connected to " + peer.getId(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StudentClassroomActivity.this,"Connected to " + peer.getId(), Toast.LENGTH_SHORT).show();
                     try {
                         if(remoteStream.audioTracks.size()==0 || remoteStream.videoTracks.size()==0) return;
                         mCallStatus.setVisibility(View.GONE);
@@ -330,7 +328,7 @@ public class VideoChatActivity extends ListActivity {
                 String msg  = jsonMsg.getString(Constants.JSON_MSG);
                 long   time = jsonMsg.getLong(Constants.JSON_TIME);
                 final ChatMessage chatMsg = new ChatMessage(uuid, msg, time);
-                VideoChatActivity.this.runOnUiThread(new Runnable() {
+                StudentClassroomActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mChatAdapter.addMessage(chatMsg);
@@ -344,7 +342,7 @@ public class VideoChatActivity extends ListActivity {
         @Override
         public void onPeerConnectionClosed(PnPeer peer) {
             super.onPeerConnectionClosed(peer);
-            VideoChatActivity.this.runOnUiThread(new Runnable() {
+            StudentClassroomActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mCallStatus.setText("Call Ended...");
@@ -352,7 +350,7 @@ public class VideoChatActivity extends ListActivity {
                 }
             });
             try {Thread.sleep(1500);} catch (InterruptedException e){e.printStackTrace();}
-            Intent intent = new Intent(VideoChatActivity.this, MainActivity.class);
+            Intent intent = new Intent(StudentClassroomActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }

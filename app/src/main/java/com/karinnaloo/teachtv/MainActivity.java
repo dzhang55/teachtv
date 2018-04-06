@@ -196,7 +196,7 @@ public class MainActivity extends ListActivity {
                         @Override
                         public void successCallback(String channel, Object message) {
                             Log.d("MA-dC", "SUCCESS: " + message.toString());
-                            Intent intent = new Intent(MainActivity.this, VideoChatActivity.class);
+                            Intent intent = new Intent(MainActivity.this, TeacherClassroomActivity.class);
                             intent.putExtra(Constants.USER_NAME, username);
                             intent.putExtra(Constants.CALL_USER, callNum);  // Only accept from this number?
                             startActivity(intent);
@@ -211,6 +211,7 @@ public class MainActivity extends ListActivity {
 
     /**
      * Handle incoming calls. TODO: Implement an accept/reject functionality.
+     * TODO(dz): Remove this functionality.
      * @param userId
      */
     private void dispatchIncomingCall(String userId){
