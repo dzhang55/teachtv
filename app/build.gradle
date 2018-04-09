@@ -23,6 +23,9 @@ repositories {
     flatDir {
         dirs 'libs'
     }
+    maven {
+        url "https://maven.google.com"
+    }
 }
 
 dependencies {
@@ -30,4 +33,8 @@ dependencies {
     implementation 'com.pubnub:pubnub-android:3.7.4'
     implementation 'io.pristine:libjingle:9694@aar'
     implementation project(':pnwebrtc')
+    implementation 'com.google.firebase:firebase-auth:11.6.0'
+    implementation 'com.android.support:support-compat:21.0.0'
 }
+
+apply plugin: 'com.google.gms.google-services'
