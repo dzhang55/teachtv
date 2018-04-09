@@ -145,8 +145,8 @@ public class PnRTCClient {
      * Connect with another user by their ID.
      * @param userId The user to establish a WebRTC connection with
      */
-    public void connect(String userId){
-        this.pcClient.connect(userId);
+    public void connect(String userId, boolean dialed){
+        this.pcClient.connect(userId, dialed);
     }
 
     /**

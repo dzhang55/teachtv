@@ -41,6 +41,16 @@
                 android:value="com.karinnaloo.teachtv.MainActivity" />
         </activity>
         <activity
+            android:name="com.karinnaloo.teachtv.StudentClassroomActivity"
+            android:label="@string/title_activity_video_chat"
+            android:parentActivityName="com.karinnaloo.teachtv.MainActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.karinnaloo.teachtv.MainActivity" />
+        </activity>
+        <activity
             android:name="com.karinnaloo.teachtv.IncomingCallActivity"
             android:label="@string/title_activity_incoming_call">
         </activity>

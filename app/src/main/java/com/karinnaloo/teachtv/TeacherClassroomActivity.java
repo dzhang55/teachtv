@@ -151,14 +151,14 @@ public class TeacherClassroomActivity extends ListActivity {
         this.pnRTCClient.attachLocalMediaStream(mediaStream);
 
         // Listen on a channel. This is your "phone number," also set the max chat users.
-        this.pnRTCClient.listenOn("Kevin");
+        this.pnRTCClient.listenOn(extras.getString(Constants.USER_NAME, ""));
         this.pnRTCClient.setMaxConnections(1);
 
         // If the intent contains a number to dial, call it now that you are connected.
         //  Else, remain listening for a call.
         if (extras.containsKey(Constants.CALL_USER)) {
             String callUser = extras.getString(Constants.CALL_USER, "");
-            connectToUser(callUser);
+            connectToUser(callUser, extras.getBoolean("dialed"));
         }
     }
 
@@ -243,8 +243,8 @@ public class TeacherClassroomActivity extends ListActivity {
         return servers;
     }
 
-    public void connectToUser(String user) {
-        this.pnRTCClient.connect(user);
+    public void connectToUser(String user, boolean dialed) {
+        this.pnRTCClient.connect(user, dialed);
     }
 
     public void hangup(View view) {

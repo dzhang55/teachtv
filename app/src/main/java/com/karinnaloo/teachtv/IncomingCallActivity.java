@@ -85,6 +85,7 @@ public class IncomingCallActivity extends Activity {
         Intent intent = new Intent(IncomingCallActivity.this, TeacherClassroomActivity.class);
         intent.putExtra(Constants.USER_NAME, this.username);
         intent.putExtra(Constants.CALL_USER, this.callUser);
+        intent.putExtra("dialed", false);
         startActivity(intent);
     }
 

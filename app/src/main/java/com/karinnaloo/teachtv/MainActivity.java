@@ -199,6 +199,7 @@ public class MainActivity extends ListActivity {
                             Intent intent = new Intent(MainActivity.this, TeacherClassroomActivity.class);
                             intent.putExtra(Constants.USER_NAME, username);
                             intent.putExtra(Constants.CALL_USER, callNum);  // Only accept from this number?
+                            intent.putExtra("dialed", true);
                             startActivity(intent);
                         }
                     });

@@ -4,3 +4,6 @@ local.properties
 pnwebrtc/pnwebrtc.iml
 teachtv.iml
 .DS_Store
+app/app.iml
+build/
+app/src/main/java/com/karinnaloo/teachtv/util/Secrets.java

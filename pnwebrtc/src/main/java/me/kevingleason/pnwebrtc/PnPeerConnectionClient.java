@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <h1>PeerConnection manager for {@link pnwebrtc.PnRTCClient}</h1>
+ * <h1>PeerConnection manager for {@link me.kevingleason.pnwebrtc.PnRTCClient}</h1>
  * <pre>
  * Author:  Kevin Gleason - Boston College '16
  * File:    PnPeerConnectionClient.java
@@ -47,6 +47,7 @@ public class PnPeerConnectionClient {
     private Map<String,PnAction> actionMap;
     private Map<String,PnPeer> peers;
     private String id;
+    private String sessionID;
 
     public PnPeerConnectionClient(Pubnub pubnub, PnSignalingParams signalingParams, PnRTCListener rtcListener){
         this.mPubNub = pubnub;
@@ -54,6 +55,7 @@ public class PnPeerConnectionClient {
         this.mRtcListener = rtcListener;
         this.pcFactory = new PeerConnectionFactory(); // TODO: Check it allowed, else extra param
         this.peers = new HashMap<String, PnPeer>();
+        sessionID = this.mPubNub.uuid();
         init();
     }
 
@@ -87,13 +89,15 @@ public class PnPeerConnectionClient {
      * @param userId The user to establish a WebRTC connection with
      * @return boolean value of success
      */
-    boolean connect(String userId) {
+    boolean connect(String userId, boolean dialed) {
         if (!peers.containsKey(userId)) { // Prevents duplicate dials.
             if (peers.size() < MAX_CONNECTIONS) {
                 PnPeer peer = addPeer(userId);
                 peer.pc.addStream(this.localMediaStream);
                 try {
-                    actionMap.get(CreateOfferAction.TRIGGER).execute(userId, new JSONObject());
+                    if (!dialed) {
+                        actionMap.get(CreateOfferAction.TRIGGER).execute(userId, new JSONObject());
+                    }
                 } catch (JSONException e){
                     e.printStackTrace();
                     return false;
@@ -183,7 +187,7 @@ public class PnPeerConnectionClient {
         try {
             JSONObject message = new JSONObject();
             message.put(PnRTCMessage.JSON_PACKET, packet);
-            message.put(PnRTCMessage.JSON_ID, ""); //Todo: session id, unused in js SDK?
+            message.put(PnRTCMessage.JSON_ID, sessionID); //Todo: session id, unused in js SDK?
             message.put(PnRTCMessage.JSON_NUMBER, this.id);
             this.mPubNub.publish(toID, message, new Callback() {  // Todo: reconsider callback.
                 @Override
@@ -303,7 +307,7 @@ public class PnPeerConnectionClient {
 
     /**
      * Static method to generate the proper JSON for a user message. Use this when you don't have
-     *   a {@link pnwebrtc.PnRTCClient} instantiated. Simply send a publish with the
+     *   a {@link me.kevingleason.pnwebrtc.PnRTCClient} instantiated. Simply send a publish with the
      *   returned JSONObject to the ID that a user is subscribed to.
      * @param userId Your UserID, needed to tag the message
      * @param message The message you with to send some other user
@@ -369,6 +373,7 @@ public class PnPeerConnectionClient {
                     actionMap.get(type).execute(peerId, packet);
                     return;
                 }
+
                 if (packet.has(PnRTCMessage.JSON_ICE)){
                     actionMap.get(AddIceCandidateAction.TRIGGER).execute(peerId,packet);
                     return;
@@ -384,5 +389,4 @@ public class PnPeerConnectionClient {
         }
 
     }
-
 }
