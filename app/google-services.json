@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "142158417522",
+    "firebase_url": "https://teachtv-5e43c.firebaseio.com",
+    "project_id": "teachtv-5e43c",
+    "storage_bucket": "teachtv-5e43c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:142158417522:android:1135130ad0370f30",
+        "android_client_info": {
+          "package_name": "com.karinnaloo.teachtv"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "142158417522-afsref4cr1g47jte8eoua71q8ob9sdfa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.karinnaloo.teachtv",
+            "certificate_hash": "8396ada8b8f0edbc879c1c32b36c1ce9e8f27009"
+          }
+        },
+        {
+          "client_id": "142158417522-72gu8cffh9embllujl9jup0bt0c78ght.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCstbujt3gO4b9bPvlmRvL0MN4roLacz8E"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "142158417522-vmhllfc7f5kuo5gf42vgm8havfla6cs0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.karinnaloo.teachtv"
+              }
+            },
+            {
+              "client_id": "142158417522-72gu8cffh9embllujl9jup0bt0c78ght.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
