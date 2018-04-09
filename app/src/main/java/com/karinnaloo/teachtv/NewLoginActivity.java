@@ -10,13 +10,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class NewLoginActivity extends Activity {
 
@@ -94,10 +92,9 @@ public class NewLoginActivity extends Activity {
                                     }
                                 } else {
                                     Toast.makeText(NewLoginActivity.this, "USER LOGGED IN", Toast.LENGTH_LONG).show();
-                                    // TODO: EVENTUAL LOG INTO HOME
-//                                    Intent intent = new Intent(NewLoginActivity.this, MainActivity.class);
-//                                    startActivity(intent);
-//                                    finish();
+                                    Intent intent = new Intent(NewLoginActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
                                 }
                             }
                         });

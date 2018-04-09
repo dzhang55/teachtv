@@ -82,9 +82,8 @@ public class NewRegisterActivity extends Activity{
                                             Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(NewRegisterActivity.this, "USER LOGGED IN", Toast.LENGTH_LONG).show();
-                                    // TODO: EVENTUAL LOGIN
-//                                    startActivity(new Intent(NewRegisterActivity.this, Home.class));
-//                                    finish();
+                                    startActivity(new Intent(NewRegisterActivity.this, MainActivity.class));
+                                    finish();
                                 }
                             }
                         });
