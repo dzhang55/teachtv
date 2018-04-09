@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="light_blue">#A7DBD8</color>
+    <color name="deep_blue">#69D2E7</color>
+    <color name="orange">#F38630</color>
+
+    <color name="beige">#E0E4CC</color>
+    <color name="dark_orange">#FA6900</color>
+
+    <color name="dark_grey">#222222</color>
+    <color name="light_grey">#5e6266</color>
+
     <color name="pn_red">#d02129</color>
     <color name="pn_blue">#ff19a2c6</color>
     <color name="pn_blue_dark">#ff187998</color>

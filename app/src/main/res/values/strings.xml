@@ -21,4 +21,7 @@
     <string name="incoming_call">Incoming Call&#8230;</string>
     <string name="incoming_call_from">Kevin Gleason</string>
 
+    <string name="btn_link_to_register">Not a member? Get registered now!</string>
+    <string name="btn_link_to_login">Already registered? Go to login!</string>
+
 </resources>
