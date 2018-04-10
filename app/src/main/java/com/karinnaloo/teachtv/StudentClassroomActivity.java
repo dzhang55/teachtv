@@ -50,13 +50,7 @@ import me.kevingleason.pnwebrtc.PnSignalingParams;
  * REQUIRED: The intent must contain a
  */
 public class StudentClassroomActivity extends ListActivity {
-    public static final String VIDEO_TRACK_ID = "videoPN";
-    public static final String AUDIO_TRACK_ID = "audioPN";
-    public static final String LOCAL_MEDIA_STREAM_ID = "localStreamPN";
-
     private PnRTCClient pnRTCClient;
-    private VideoSource localVideoSource;
-    private VideoRenderer.Callbacks localRender;
     private VideoRenderer.Callbacks remoteRender;
     private GLSurfaceView videoView;
     private EditText mChatEditText;
@@ -71,7 +65,7 @@ public class StudentClassroomActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_chat);
+        setContentView(R.layout.activity_student_classroom);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         Bundle extras = getIntent().getExtras();
@@ -108,22 +102,6 @@ public class StudentClassroomActivity extends ListActivity {
             this.pnRTCClient.setSignalParams(new PnSignalingParams());
         }
 
-        // Returns the number of cams & front/back face device name
-        int camNumber = VideoCapturerAndroid.getDeviceCount();
-        String frontFacingCam = VideoCapturerAndroid.getNameOfFrontFacingDevice();
-        String backFacingCam = VideoCapturerAndroid.getNameOfBackFacingDevice();
-
-        // Creates a VideoCapturerAndroid instance for the device name
-        VideoCapturer capturer = VideoCapturerAndroid.create(frontFacingCam);
-
-        // First create a Video Source, then we can make a Video Track
-        localVideoSource = pcFactory.createVideoSource(capturer, this.pnRTCClient.videoConstraints());
-        VideoTrack localVideoTrack = pcFactory.createVideoTrack(VIDEO_TRACK_ID, localVideoSource);
-
-        // First we create an AudioSource then we can create our AudioTrack
-        AudioSource audioSource = pcFactory.createAudioSource(this.pnRTCClient.audioConstraints());
-        AudioTrack localAudioTrack = pcFactory.createAudioTrack(AUDIO_TRACK_ID, audioSource);
-
         // To create our VideoRenderer, we can use the included VideoRendererGui for simplicity
         // First we need to set the GLSurfaceView that it should render to
         this.videoView = (GLSurfaceView) findViewById(R.id.gl_surface);
@@ -132,24 +110,10 @@ public class StudentClassroomActivity extends ListActivity {
         VideoRendererGui.setView(videoView, null);
 
         // Now that VideoRendererGui is ready, we can get our VideoRenderer.
-        // IN THIS ORDER. Effects which is on top or bottom
         remoteRender = VideoRendererGui.create(0, 0, 100, 100, VideoRendererGui.ScalingType.SCALE_ASPECT_FILL, false);
-        localRender = VideoRendererGui.create(0, 0, 100, 100, VideoRendererGui.ScalingType.SCALE_ASPECT_FILL, true);
-
-        // We start out with an empty MediaStream object, created with help from our PeerConnectionFactory
-        //  Note that LOCAL_MEDIA_STREAM_ID can be any string
-        MediaStream mediaStream = pcFactory.createLocalMediaStream(LOCAL_MEDIA_STREAM_ID);
-
-        // Now we can add our tracks.
-        mediaStream.addTrack(localVideoTrack);
-        mediaStream.addTrack(localAudioTrack);
 
         // First attach the RTC Listener so that callback events will be triggered
         this.pnRTCClient.attachRTCListener(new DemoRTCListener());
-
-        // Then attach your local media stream to the PnRTCClient.
-        //  This will trigger the onLocalStream callback.
-        this.pnRTCClient.attachLocalMediaStream(mediaStream);
 
         // Listen on a channel. This is your "phone number," also set the max chat users.
         this.pnRTCClient.listenOn(extras.getString(Constants.USER_NAME, ""));
@@ -189,22 +153,17 @@ public class StudentClassroomActivity extends ListActivity {
     protected void onPause() {
         super.onPause();
         this.videoView.onPause();
-        this.localVideoSource.stop();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         this.videoView.onResume();
-        this.localVideoSource.restart();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (this.localVideoSource != null) {
-            this.localVideoSource.stop();
-        }
         if (this.pnRTCClient != null) {
             this.pnRTCClient.onDestroy();
         }
@@ -287,6 +246,7 @@ public class StudentClassroomActivity extends ListActivity {
      * DemoRTC is just a Log Listener with the added functionality to append screens.
      */
     private class DemoRTCListener extends LogRTCListener {
+        // TODO(dz): Clean this up
         @Override
         public void onLocalStream(final MediaStream localStream) {
             super.onLocalStream(localStream); // Will log values
@@ -294,7 +254,6 @@ public class StudentClassroomActivity extends ListActivity {
                 @Override
                 public void run() {
                     if(localStream.videoTracks.size()==0) return;
-                    localStream.videoTracks.get(0).addRenderer(new VideoRenderer(localRender));
                 }
             });
         }
@@ -311,7 +270,6 @@ public class StudentClassroomActivity extends ListActivity {
                         mCallStatus.setVisibility(View.GONE);
                         remoteStream.videoTracks.get(0).addRenderer(new VideoRenderer(remoteRender));
                         VideoRendererGui.update(remoteRender, 0, 0, 100, 100, VideoRendererGui.ScalingType.SCALE_ASPECT_FILL, false);
-                        VideoRendererGui.update(localRender, 72, 65, 25, 25, VideoRendererGui.ScalingType.SCALE_ASPECT_FIT, true);
                     }
                     catch (Exception e){ e.printStackTrace(); }
                 }

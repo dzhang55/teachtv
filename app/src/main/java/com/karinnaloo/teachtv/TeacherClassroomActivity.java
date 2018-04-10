@@ -56,7 +56,6 @@ public class TeacherClassroomActivity extends ListActivity {
     private PnRTCClient pnRTCClient;
     private VideoSource localVideoSource;
     private VideoRenderer.Callbacks localRender;
-    private VideoRenderer.Callbacks remoteRender;
     private GLSurfaceView videoView;
     private EditText mChatEditText;
     private ListView mChatList;
@@ -70,7 +69,7 @@ public class TeacherClassroomActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_chat);
+        setContentView(R.layout.activity_teacher_classroom);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         Bundle extras = getIntent().getExtras();
@@ -131,8 +130,6 @@ public class TeacherClassroomActivity extends ListActivity {
         VideoRendererGui.setView(videoView, null);
 
         // Now that VideoRendererGui is ready, we can get our VideoRenderer.
-        // IN THIS ORDER. Effects which is on top or bottom
-        remoteRender = VideoRendererGui.create(0, 0, 100, 100, VideoRendererGui.ScalingType.SCALE_ASPECT_FILL, false);
         localRender = VideoRendererGui.create(0, 0, 100, 100, VideoRendererGui.ScalingType.SCALE_ASPECT_FILL, true);
 
         // We start out with an empty MediaStream object, created with help from our PeerConnectionFactory
@@ -158,7 +155,7 @@ public class TeacherClassroomActivity extends ListActivity {
         //  Else, remain listening for a call.
         if (extras.containsKey(Constants.CALL_USER)) {
             String callUser = extras.getString(Constants.CALL_USER, "");
-            connectToUser(callUser, extras.getBoolean("dialed"));
+            connectToUser(callUser, false);
         }
     }
 
@@ -308,8 +305,6 @@ public class TeacherClassroomActivity extends ListActivity {
                     try {
                         if(remoteStream.audioTracks.size()==0 || remoteStream.videoTracks.size()==0) return;
                         mCallStatus.setVisibility(View.GONE);
-                        remoteStream.videoTracks.get(0).addRenderer(new VideoRenderer(remoteRender));
-                        VideoRendererGui.update(remoteRender, 0, 0, 100, 100, VideoRendererGui.ScalingType.SCALE_ASPECT_FILL, false);
                         VideoRendererGui.update(localRender, 72, 65, 25, 25, VideoRendererGui.ScalingType.SCALE_ASPECT_FIT, true);
                     }
                     catch (Exception e){ e.printStackTrace(); }

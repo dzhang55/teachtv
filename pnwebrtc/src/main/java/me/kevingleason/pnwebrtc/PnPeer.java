@@ -49,7 +49,9 @@ public class PnPeer implements SdpObserver, PeerConnection.Observer {
         this.pc = pcClient.pcFactory.createPeerConnection(pcClient.signalingParams.iceServers,
                 pcClient.signalingParams.pcConstraints, this);
         setStatus(STATUS_CONNECTING);
-        pc.addStream(pcClient.getLocalMediaStream());
+        if (pcClient.getLocalMediaStream() != null) {
+            pc.addStream(pcClient.getLocalMediaStream());
+        }
     }
 
     public synchronized void setStatus(String status){

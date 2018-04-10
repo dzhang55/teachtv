@@ -196,10 +196,9 @@ public class MainActivity extends ListActivity {
                         @Override
                         public void successCallback(String channel, Object message) {
                             Log.d("MA-dC", "SUCCESS: " + message.toString());
-                            Intent intent = new Intent(MainActivity.this, TeacherClassroomActivity.class);
+                            Intent intent = new Intent(MainActivity.this, StudentClassroomActivity.class);
                             intent.putExtra(Constants.USER_NAME, username);
                             intent.putExtra(Constants.CALL_USER, callNum);  // Only accept from this number?
-                            intent.putExtra("dialed", true);
                             startActivity(intent);
                         }
                     });

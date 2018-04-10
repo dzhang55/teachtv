@@ -71,10 +71,11 @@ public class PnPeerConnectionClient {
     }
 
     boolean listenOn(String myId){  // Todo: return success?
-        if (localMediaStream==null){       // Not true for streaming?
-            mRtcListener.onDebug(new PnRTCMessage("Need to add media stream before you can connect."));
-            return false;
-        }
+        //TODO(dz): Make sure we can remove this
+//        if (localMediaStream==null){       // Not true for streaming?
+//            mRtcListener.onDebug(new PnRTCMessage("Need to add media stream before you can connect."));
+//            return false;
+//        }
         if (this.id != null){  // Prevent listening on multiple channels.
             mRtcListener.onDebug(new PnRTCMessage("Already listening on " + this.id + ". Cannot have multiple connections."));
             return false;
@@ -93,7 +94,6 @@ public class PnPeerConnectionClient {
         if (!peers.containsKey(userId)) { // Prevents duplicate dials.
             if (peers.size() < MAX_CONNECTIONS) {
                 PnPeer peer = addPeer(userId);
-                peer.pc.addStream(this.localMediaStream);
                 try {
                     if (!dialed) {
                         actionMap.get(CreateOfferAction.TRIGGER).execute(userId, new JSONObject());
@@ -347,7 +347,6 @@ public class PnPeerConnectionClient {
                 if (!peers.containsKey(peerId)){
                     // Possibly threshold number of allowed users
                     peer = addPeer(peerId);
-                    peer.pc.addStream(localMediaStream);
                 } else {
                     peer = peers.get(peerId);
                 }
