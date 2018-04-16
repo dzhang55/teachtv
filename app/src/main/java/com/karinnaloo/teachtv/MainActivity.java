@@ -154,7 +154,7 @@ public class MainActivity extends ListActivity {
                 Log.d("MA-iPN", "MESSAGE: " + message.toString());
                 JsonNode jsonMsg = message.getMessage();
                 if (!jsonMsg.has(Constants.JSON_CALL_USER)) return;     //Ignore Signaling messages.
-                String user = jsonMsg.get(Constants.JSON_CALL_USER).toString();
+                String user = jsonMsg.get(Constants.JSON_CALL_USER).textValue();
                 dispatchIncomingCall(user);
             }
 
@@ -207,7 +207,7 @@ public class MainActivity extends ListActivity {
                     @Override
                     public void onResponse(PNPublishResult result, PNStatus status) {
                         Log.d("MA-dC", "SUCCESS: " + result.toString());
-                        Intent intent = new Intent(MainActivity.this, TeacherClassroomActivity.class);
+                        Intent intent = new Intent(MainActivity.this, StudentClassroomActivity.class);
                         intent.putExtra(Constants.USER_NAME, username);
                         intent.putExtra(Constants.CALL_USER, callNum);  // Only accept from this number?
                         intent.putExtra("dialed", true);
@@ -232,12 +232,9 @@ public class MainActivity extends ListActivity {
     }
 
     private void setUserStatus(String status){
-        HashMap<String, String> stateMap = new HashMap<String, String>();
-        stateMap.put(Constants.JSON_STATUS, status);
         this.mPubNub.setPresenceState()
                 .channels(Arrays.asList(this.stdByChannel))
-                .state(stateMap)
-                .uuid(this.username)
+                .uuid(status) // Sets state for key uuid to be value status.
                 .async(new PNCallback<PNSetStateResult>() {
             @Override
             public void onResponse(PNSetStateResult result, PNStatus status) {

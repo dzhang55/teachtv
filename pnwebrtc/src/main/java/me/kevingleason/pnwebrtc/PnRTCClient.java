@@ -32,25 +32,6 @@ public class PnRTCClient {
     private String UUID;
 
     /**
-     * Minimal constructor. Requires a valid Pub and Sub key. Get your Pub/Sub keys for free at
-     *  https://admin.pubnub.com/#/register and find keys on developer portal.
-     * No UUID provided so a random phone number will be generated with this constructor (XXX-XXXX).
-     * @param pubKey PubNub Pub Key
-     * @param subKey PubNub Sub Key
-     */
-    public PnRTCClient(String pubKey, String subKey) {
-        this.UUID = generateRandomNumber();
-        PNConfiguration config = new PNConfiguration()
-                .setPublishKey(pubKey)
-                .setSubscribeKey(subKey)
-                .setUuid(this.UUID)
-                .setSecure(true);
-        this.mPubNub = new PubNub(config);
-        this.pnSignalingParams = PnSignalingParams.defaultInstance();
-        this.pcClient = new PnPeerConnectionClient(this.mPubNub, this.pnSignalingParams, new PnRTCListener() {});
-    }
-
-    /**
      * Slightly more verbose constructor. Requires a valid Pub and Sub key. Get your Pub/Sub keys for free at
      *  https://admin.pubnub.com/#/register and find keys on developer portal.
      * @param pubKey PubNub Pub Key

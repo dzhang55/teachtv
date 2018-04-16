@@ -109,8 +109,7 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
         this.mPubNub.getPresenceState().channels(Arrays.asList(stdByUser)).uuid(user.getUserId()).async(new PNCallback<PNGetStateResult>() {
             @Override
             public void onResponse(PNGetStateResult result, PNStatus status) {
-                // TODO: kloo figure out status
-//                final String userStatus = result.getStateByUUID().get(Constants.JSON_STATUS).toString();
+//                final String userStatus = result.getStateByUUID().get(user.getUserId()).toString();
 //                user.setStatus(userStatus);
                 user.setStatus("Poop");
                 ((Activity)getContext()).runOnUiThread(new Runnable() {
@@ -133,8 +132,8 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
                 Log.d("HA-uH", "HISTORY: " + result.toString());
                 for (PNHistoryItemResult itemResult : result.getMessages()) {
                     JsonNode entry = itemResult.getEntry();
-                    String userName = entry.get(Constants.JSON_CALL_USER).toString();
-                    long timeStamp = entry.get(Constants.JSON_CALL_TIME).asLong();
+                    String userName = entry.get(Constants.JSON_CALL_USER).textValue();
+                    long timeStamp = entry.get(Constants.JSON_CALL_TIME).longValue();
                     ChatUser cUser = new ChatUser(userName);
                     if (users.containsKey(userName)) {
                         cUser = users.get(userName);

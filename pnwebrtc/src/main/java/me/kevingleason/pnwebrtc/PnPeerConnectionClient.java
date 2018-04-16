@@ -100,7 +100,7 @@ public class PnPeerConnectionClient {
     boolean connect(String userId, boolean dialed) {
         if (!peers.containsKey(userId)) { // Prevents duplicate dials.
             if (peers.size() < MAX_CONNECTIONS) {
-                PnPeer peer = addPeer(userId);
+                addPeer(userId);
                 try {
                     if (!dialed) {
                         actionMap.get(CreateOfferAction.TRIGGER).execute(userId, new ObjectMapper().createObjectNode());
@@ -122,9 +122,8 @@ public class PnPeerConnectionClient {
     }
 
     private void subscribe(String channel){
-        // mPubNub.subscribe(channel, this.mSubscribeReceiver);
         this.mPubNub.addListener(this.mSubscribeReceiver);
-        this.mPubNub.subscribe().channels(Arrays.asList(channel)).withPresence().withPresence().execute();
+        this.mPubNub.subscribe().channels(Arrays.asList(channel)).withPresence().execute();
     }
 
     public void setLocalMediaStream(MediaStream localStream){
@@ -221,8 +220,8 @@ public class PnPeerConnectionClient {
             peer.setType(PnPeer.TYPE_OFFER);
             peer.setStatus(PnPeer.STATUS_CONNECTED);
             SessionDescription sdp = new SessionDescription(
-                    SessionDescription.Type.fromCanonicalForm(payload.get("type").toString()),
-                    payload.get("sdp").toString()
+                    SessionDescription.Type.fromCanonicalForm(payload.get("type").textValue()),
+                    payload.get("sdp").textValue()
             );
             peer.pc.setRemoteDescription(peer, sdp);
             peer.pc.createAnswer(peer, signalingParams.pcConstraints);
@@ -235,8 +234,8 @@ public class PnPeerConnectionClient {
             Log.d("SRSAction","SetRemoteSDPAction");
             PnPeer peer = peers.get(peerId);
             SessionDescription sdp = new SessionDescription(
-                    SessionDescription.Type.fromCanonicalForm(payload.get("type").toString()),
-                    payload.get("sdp").toString()
+                    SessionDescription.Type.fromCanonicalForm(payload.get("type").textValue()),
+                    payload.get("sdp").textValue()
             );
             peer.pc.setRemoteDescription(peer, sdp);
         }
@@ -249,9 +248,9 @@ public class PnPeerConnectionClient {
             PeerConnection pc = peers.get(peerId).pc;
             if (pc.getRemoteDescription() != null) {
                 IceCandidate candidate = new IceCandidate(
-                        payload.get("sdpMid").toString(),
-                        payload.get("sdpMLineIndex").asInt(),
-                        payload.get("candidate").toString()
+                        payload.get("sdpMid").textValue(),
+                        payload.get("sdpMLineIndex").intValue(),
+                        payload.get("candidate").textValue()
                 );
                 pc.addIceCandidate(candidate);
             }
@@ -339,7 +338,7 @@ public class PnPeerConnectionClient {
             JsonNode jsonMessage = message.getMessage();
             mRtcListener.onDebug(new PnRTCMessage(jsonMessage.toString()));
             try {
-                String peerId = jsonMessage.get(PnRTCMessage.JSON_NUMBER).toString();
+                String peerId = jsonMessage.get(PnRTCMessage.JSON_NUMBER).textValue();
                 JsonNode packet = jsonMessage.get(PnRTCMessage.JSON_PACKET);
                 PnPeer peer;
                 if (!peers.containsKey(peerId)){
@@ -366,7 +365,7 @@ public class PnPeerConnectionClient {
                         mRtcListener.onDebug(new PnRTCMessage("SDP - " + peer.toString()));
                         // Todo: reveivercb(peer);
                     }
-                    String type = packet.get(PnRTCMessage.JSON_TYPE).toString();
+                    String type = packet.get(PnRTCMessage.JSON_TYPE).textValue();
                     actionMap.get(type).execute(peerId, packet);
                     return;
                 }
