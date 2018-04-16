@@ -10,15 +10,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.pubnub.api.Callback;
-import com.pubnub.api.Pubnub;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.pubnub.api.PubNub;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,25 +27,32 @@ import com.karinnaloo.teachtv.R;
 import com.karinnaloo.teachtv.adt.ChatUser;
 import com.karinnaloo.teachtv.adt.HistoryItem;
 import com.karinnaloo.teachtv.util.Constants;
+import com.pubnub.api.callbacks.PNCallback;
+import com.pubnub.api.models.consumer.PNStatus;
+import com.pubnub.api.models.consumer.history.PNHistoryItemResult;
+import com.pubnub.api.models.consumer.history.PNHistoryResult;
+import com.pubnub.api.models.consumer.presence.PNGetStateResult;
 
 /**
  * Created by GleasonK on 7/31/15.
  */
 public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
     private final Context context;
-    private Pubnub mPubNub;
+    private PubNub mPubNub;
     private LayoutInflater inflater;
     private List<HistoryItem> values;
     private Map<String, ChatUser> users;
+    private String uuid;
 
 
-    public HistoryAdapter(Context context, List<HistoryItem> values, Pubnub pubnub) {
+    public HistoryAdapter(Context context, List<HistoryItem> values, PubNub pubnub, String uuid) {
         super(context, R.layout.history_row_layout, android.R.id.text1, values);
         this.context  = context;
         this.inflater = LayoutInflater.from(context);
         this.mPubNub  = pubnub;
         this.values   = values;
         this.users    = new HashMap<String, ChatUser>();
+        this.uuid     = uuid;
         updateHistory();
     }
 
@@ -102,53 +106,45 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
 
     private void getUserStatus(final ChatUser user, final TextView statusView){
         String stdByUser = user.getUserId() + Constants.STDBY_SUFFIX;
-        this.mPubNub.getState(stdByUser, user.getUserId(), new Callback() {
+        this.mPubNub.getPresenceState().channels(Arrays.asList(stdByUser)).uuid(user.getUserId()).async(new PNCallback<PNGetStateResult>() {
             @Override
-            public void successCallback(String channel, Object message) {
-                JSONObject jsonMsg = (JSONObject) message;
-                try {
-                    if (!jsonMsg.has(Constants.JSON_STATUS)) return;
-                    final String status = jsonMsg.getString(Constants.JSON_STATUS);
-                    user.setStatus(status);
-                    ((Activity)getContext()).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            statusView.setText(status);
-                        }
-                    });
-                } catch (JSONException e){
-                    e.printStackTrace();
-                }
+            public void onResponse(PNGetStateResult result, PNStatus status) {
+                // TODO: kloo figure out status
+//                final String userStatus = result.getStateByUUID().get(Constants.JSON_STATUS).toString();
+//                user.setStatus(userStatus);
+                user.setStatus("Poop");
+                ((Activity)getContext()).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+//                        statusView.setText(userStatus);
+                        user.setStatus("Poop");
+                    }
+                });
             }
         });
     }
 
     public void updateHistory(){
         final List<HistoryItem> rtcHistory = new LinkedList<HistoryItem>();
-        String usrStdBy = this.mPubNub.getUUID() + Constants.STDBY_SUFFIX;
-        this.mPubNub.history(usrStdBy, 25, new Callback() {
+        String usrStdBy = this.uuid + Constants.STDBY_SUFFIX;
+        this.mPubNub.history().channel(usrStdBy).count(25).async(new PNCallback<PNHistoryResult>() {
             @Override
-            public void successCallback(String channel, Object message) {
-                Log.d("HA-uH","HISTORY: " + message.toString());
-                try {
-                    JSONArray historyArray = ((JSONArray) message).getJSONArray(0);
-                    for(int i=0; i< historyArray.length(); i++){
-                        JSONObject historyJson = historyArray.getJSONObject(i);
-                        String userName = historyJson.getString(Constants.JSON_CALL_USER);
-                        long timeStamp  = historyJson.getLong(Constants.JSON_CALL_TIME);
-                        ChatUser cUser  = new ChatUser(userName);
-                        if (users.containsKey(userName)){
-                            cUser = users.get(userName);
-                        } else {
-                            users.put(userName, cUser);
-                        }
-                        rtcHistory.add(0, new HistoryItem(cUser, timeStamp));
+            public void onResponse(PNHistoryResult result, PNStatus status) {
+                Log.d("HA-uH", "HISTORY: " + result.toString());
+                for (PNHistoryItemResult itemResult : result.getMessages()) {
+                    JsonNode entry = itemResult.getEntry();
+                    String userName = entry.get(Constants.JSON_CALL_USER).toString();
+                    long timeStamp = entry.get(Constants.JSON_CALL_TIME).asLong();
+                    ChatUser cUser = new ChatUser(userName);
+                    if (users.containsKey(userName)) {
+                        cUser = users.get(userName);
+                    } else {
+                        users.put(userName, cUser);
                     }
-                    values = rtcHistory;
-                    updateAdapter();
-                } catch (JSONException e){
-                    // e.printStackTrace();
+                    rtcHistory.add(0, new HistoryItem(cUser, timeStamp));
                 }
+                values = rtcHistory;
+                updateAdapter();
             }
         });
     }

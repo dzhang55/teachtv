@@ -21,7 +21,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'io.pristine:libjingle:9694@aar'
-    implementation 'com.pubnub:pubnub-android:3.7.4'
+    implementation group: 'com.pubnub', name: 'pubnub', version: '4.0.5'
 }
 
 //apply from: '../maven_push.gradle'

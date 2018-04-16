@@ -30,11 +30,11 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.pubnub:pubnub-android:3.7.4'
     implementation 'io.pristine:libjingle:9694@aar'
     implementation project(':pnwebrtc')
     implementation 'com.google.firebase:firebase-auth:11.6.0'
     implementation 'com.android.support:support-compat:21.0.0'
+    implementation group: 'com.pubnub', name: 'pubnub', version: '4.0.5'
 }
 
 apply plugin: 'com.google.gms.google-services'

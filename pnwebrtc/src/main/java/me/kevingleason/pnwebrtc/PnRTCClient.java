@@ -1,7 +1,11 @@
 package me.kevingleason.pnwebrtc;
 
 
-import com.pubnub.api.Pubnub;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.pubnub.api.PNConfiguration;
+import com.pubnub.api.PubNub;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,7 +27,7 @@ import java.util.List;
  */
 public class PnRTCClient {
     private PnSignalingParams pnSignalingParams;
-    private Pubnub mPubNub;
+    private PubNub mPubNub;
     private PnPeerConnectionClient pcClient;
     private String UUID;
 
@@ -36,8 +40,12 @@ public class PnRTCClient {
      */
     public PnRTCClient(String pubKey, String subKey) {
         this.UUID = generateRandomNumber();
-        this.mPubNub  = new Pubnub(pubKey, subKey);
-        this.mPubNub.setUUID(this.UUID);
+        PNConfiguration config = new PNConfiguration()
+                .setPublishKey(pubKey)
+                .setSubscribeKey(subKey)
+                .setUuid(this.UUID)
+                .setSecure(true);
+        this.mPubNub = new PubNub(config);
         this.pnSignalingParams = PnSignalingParams.defaultInstance();
         this.pcClient = new PnPeerConnectionClient(this.mPubNub, this.pnSignalingParams, new PnRTCListener() {});
     }
@@ -51,8 +59,12 @@ public class PnRTCClient {
      */
     public PnRTCClient(String pubKey, String subKey, String UUID) {
         this.UUID = UUID;
-        this.mPubNub  = new Pubnub(pubKey, subKey);
-        this.mPubNub.setUUID(this.UUID);
+        PNConfiguration config = new PNConfiguration()
+                .setPublishKey(pubKey)
+                .setSubscribeKey(subKey)
+                .setUuid(this.UUID)
+                .setSecure(true);
+        this.mPubNub = new PubNub(config);
         this.pnSignalingParams = PnSignalingParams.defaultInstance();
         this.pcClient = new PnPeerConnectionClient(this.mPubNub, this.pnSignalingParams, new PnRTCListener() {});
     }
@@ -82,10 +94,10 @@ public class PnRTCClient {
     }
 
     /**
-     * Return the {@link PnRTCClient} Pubnub instance.
-     * @return The PnRTCClient's {@link com.pubnub.api.Pubnub} instance
+     * Return the {@link PnRTCClient} PubNub instance.
+     * @return The PnRTCClient's {@link com.pubnub.api.PubNub} instance
      */
-    public Pubnub getPubNub(){
+    public PubNub getPubNub(){
         return this.mPubNub;
     }
 
@@ -169,21 +181,17 @@ public class PnRTCClient {
      * @param userId user to send a message to
      * @param message the JSON message to pass to a peer.
      */
-    public void transmit(String userId, JSONObject message){
-        JSONObject usrMsgJson = new JSONObject();
-        try {
-            usrMsgJson.put(PnRTCMessage.JSON_USERMSG, message);
-            this.pcClient.transmitMessage(userId, usrMsgJson);
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
+    public void transmit(String userId, JsonNode message){
+        ObjectNode usrMsgJson = new ObjectMapper().createObjectNode();
+        usrMsgJson.set(PnRTCMessage.JSON_USERMSG, message);
+        this.pcClient.transmitMessage(userId, usrMsgJson);
     }
 
     /**
      * Send a custom JSONObject user message to all peers.
      * @param message the JSON message to pass to all peers.
      */
-    public void transmitAll(JSONObject message){
+    public void transmitAll(JsonNode message){
         List<PnPeer> peerList = this.pcClient.getPeers();
         for(PnPeer p : peerList){
             transmit(p.getId(), message);
@@ -204,7 +212,8 @@ public class PnRTCClient {
      */
     public void onDestroy() {
         this.pcClient.closeAllConnections();
-        this.mPubNub.unsubscribeAll();
+        // TODO: kloo same as unsubscribe all?
+        this.mPubNub.unsubscribe();
     }
 
 }

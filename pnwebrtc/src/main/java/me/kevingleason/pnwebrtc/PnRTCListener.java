@@ -22,7 +22,7 @@ public abstract class PnRTCListener{
     public void onCallReady(String callId){} // TODO: Maybe not needed?
 
     /**
-     * Called in {@link com.pubnub.api.Pubnub} object's subscribe connected callback.
+     * Called in {@link com.pubnub.api.PubNub} object's subscribe connected callback.
      * Means that you are ready to receive calls.
      * @param userId The channel you are subscribed to, the userId you may be called on.
      */
@@ -66,7 +66,7 @@ public abstract class PnRTCListener{
     public void onRemoveRemoteStream(MediaStream remoteStream, PnPeer peer){}
 
     /**
-     * Called when a user message is send via {@link com.pubnub.api.Pubnub} object.
+     * Called when a user message is send via {@link com.pubnub.api.PubNub} object.
      * @param peer The peer who sent the message
      * @param message The {@link org.json.JSONObject} message sent by the user.
      */

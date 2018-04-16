@@ -10,13 +10,16 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.pubnub.api.Callback;
-import com.pubnub.api.Pubnub;
+import com.pubnub.api.PNConfiguration;
+import com.pubnub.api.PubNub;
 
 import org.json.JSONObject;
 
 import com.karinnaloo.teachtv.util.Constants;
 import me.kevingleason.pnwebrtc.PnPeerConnectionClient;
+import com.pubnub.api.callbacks.PNCallback;
+import com.pubnub.api.models.consumer.PNPublishResult;
+import com.pubnub.api.models.consumer.PNStatus;
 
 
 public class IncomingCallActivity extends Activity {
@@ -24,7 +27,7 @@ public class IncomingCallActivity extends Activity {
     private String username;
     private String callUser;
 
-    private Pubnub mPubNub;
+    private PubNub mPubNub;
     private TextView mCallerID;
 
     @Override
@@ -54,8 +57,12 @@ public class IncomingCallActivity extends Activity {
         this.mCallerID = (TextView) findViewById(R.id.caller_id);
         this.mCallerID.setText(this.callUser);
 
-        this.mPubNub  = new Pubnub(Constants.PUB_KEY, Constants.SUB_KEY);
-        this.mPubNub.setUUID(this.username);
+        PNConfiguration config = new PNConfiguration()
+                .setPublishKey(Constants.PUB_KEY)
+                .setSubscribeKey(Constants.SUB_KEY)
+                .setUuid(this.username)
+                .setSecure(true);
+        this.mPubNub = new PubNub(config);
     }
 
 
@@ -94,9 +101,9 @@ public class IncomingCallActivity extends Activity {
      */
     public void rejectCall(View view){
         JSONObject hangupMsg = PnPeerConnectionClient.generateHangupPacket(this.username);
-        this.mPubNub.publish(this.callUser,hangupMsg, new Callback() {
+        this.mPubNub.publish().message(hangupMsg).channel(this.callUser).async(new PNCallback<PNPublishResult>() {
             @Override
-            public void successCallback(String channel, Object message) {
+            public void onResponse(PNPublishResult result, PNStatus status) {
                 Intent intent = new Intent(IncomingCallActivity.this, MainActivity.class);
                 startActivity(intent);
             }
@@ -107,7 +114,8 @@ public class IncomingCallActivity extends Activity {
     protected void onStop() {
         super.onStop();
         if(this.mPubNub!=null){
-            this.mPubNub.unsubscribeAll();
+            // TODO: kloo unsubscribe all
+            this.mPubNub.unsubscribe();
         }
     }
 }
