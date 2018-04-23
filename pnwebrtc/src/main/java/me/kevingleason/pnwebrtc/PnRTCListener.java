@@ -1,5 +1,7 @@
 package me.kevingleason.pnwebrtc;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import org.webrtc.MediaStream;
 
 /**
@@ -68,9 +70,9 @@ public abstract class PnRTCListener{
     /**
      * Called when a user message is send via {@link com.pubnub.api.PubNub} object.
      * @param peer The peer who sent the message
-     * @param message The {@link org.json.JSONObject} message sent by the user.
+     * @param message The {@link JsonNode} message sent by the user.
      */
-    public void onMessage(PnPeer peer, Object message){}
+    public void onMessage(PnPeer peer, JsonNode message){}
 
     /**
      * A helpful debugging callback for testing and developing your app.

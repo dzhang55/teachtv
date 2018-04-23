@@ -137,7 +137,7 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
                     Log.e("Teachtv-history-error", status.getCategory().name());
                     return;
                 }
-                Log.d("Teachtv-HistoryAdapter", "HISTORY: " + result.toString());
+                Log.d("Teachtv-HistoryAdapter", "History: " + result.toString());
                 for (PNHistoryItemResult itemResult : result.getMessages()) {
                     JsonNode entry = itemResult.getEntry();
                     if (!entry.has(Constants.JSON_CALL_USER) || !entry.has(Constants.JSON_CALL_TIME)) {

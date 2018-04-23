@@ -140,7 +140,7 @@ public class MainActivity extends ListActivity {
      */
     private void subscribeStdBy(){
         Log.d("Teachtv-MainActivity", "subscribe: " + this.stdByChannel);
-        this.mPubNub.subscribe().channels(Arrays.asList(this.stdByChannel)).execute();
+        this.mPubNub.subscribe().channels(Arrays.asList(this.stdByChannel)).withPresence().execute();
     }
 
     /**

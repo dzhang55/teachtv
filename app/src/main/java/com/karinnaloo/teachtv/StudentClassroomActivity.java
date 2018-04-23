@@ -16,28 +16,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.JsonObject;
 import com.karinnaloo.teachtv.adapters.ChatAdapter;
 import com.karinnaloo.teachtv.adt.ChatMessage;
 import com.karinnaloo.teachtv.servers.XirSysRequest;
 import com.karinnaloo.teachtv.util.Constants;
 import com.karinnaloo.teachtv.util.LogRTCListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.webrtc.AudioSource;
-import org.webrtc.AudioTrack;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
-import org.webrtc.VideoCapturer;
-import org.webrtc.VideoCapturerAndroid;
 import org.webrtc.VideoRenderer;
 import org.webrtc.VideoRendererGui;
-import org.webrtc.VideoSource;
-import org.webrtc.VideoTrack;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -276,14 +268,11 @@ public class StudentClassroomActivity extends ListActivity {
         }
 
         @Override
-        public void onMessage(PnPeer peer, Object message) {
+        public void onMessage(PnPeer peer, JsonNode message) {
             super.onMessage(peer, message);  // Will log values
-            if (!(message instanceof JSONObject)) return; //Ignore if not JSONObject
-            JSONObject jsonMsg = (JSONObject) message;
-            try {
-                String uuid = jsonMsg.getString(Constants.JSON_MSG_UUID);
-                String msg  = jsonMsg.getString(Constants.JSON_MSG);
-                long   time = jsonMsg.getLong(Constants.JSON_TIME);
+            String uuid = message.get(Constants.JSON_MSG_UUID).textValue();
+            String msg  = message.get(Constants.JSON_MSG).textValue();
+            long   time = message.get(Constants.JSON_TIME).longValue();
                 final ChatMessage chatMsg = new ChatMessage(uuid, msg, time);
                 StudentClassroomActivity.this.runOnUiThread(new Runnable() {
                     @Override
@@ -291,9 +280,6 @@ public class StudentClassroomActivity extends ListActivity {
                         mChatAdapter.addMessage(chatMsg);
                     }
                 });
-            } catch (JSONException e){
-                e.printStackTrace();
-            }
         }
 
         @Override

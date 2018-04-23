@@ -2,6 +2,8 @@ package com.karinnaloo.teachtv.util;
 
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import org.webrtc.MediaStream;
 
 import me.kevingleason.pnwebrtc.PnPeer;
@@ -48,7 +50,7 @@ public class LogRTCListener extends PnRTCListener {
     }
 
     @Override
-    public void onMessage(PnPeer peer, Object message) {
+    public void onMessage(PnPeer peer, JsonNode message) {
         Log.i("RTCListener", "OnMessage - " + message.toString());
     }
 

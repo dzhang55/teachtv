@@ -271,7 +271,7 @@ public class PnPeerConnectionClient {
     private class PnUserMessageAction implements PnAction{
         public static final String TRIGGER = PnRTCMessage.JSON_USERMSG;
         public void execute(String peerId, JsonNode payload) {
-            Log.d("Teachtv-PnUserMessage","AddIceCandidateAction");
+            Log.d("Teachtv-PnUserMessage","PnUserMessageAction");
             JsonNode msgJson = payload.get(PnRTCMessage.JSON_USERMSG);
             PnPeer peer = peers.get(peerId);
             mRtcListener.onMessage(peer, msgJson);

@@ -35,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonObject;
@@ -312,24 +313,18 @@ public class TeacherClassroomActivity extends ListActivity {
         }
 
         @Override
-        public void onMessage(PnPeer peer, Object message) {
+        public void onMessage(PnPeer peer, JsonNode message) {
             super.onMessage(peer, message);  // Will log values
-            if (!(message instanceof JSONObject)) return; //Ignore if not JSONObject
-            JSONObject jsonMsg = (JSONObject) message;
-            try {
-                String uuid = jsonMsg.getString(Constants.JSON_MSG_UUID);
-                String msg  = jsonMsg.getString(Constants.JSON_MSG);
-                long   time = jsonMsg.getLong(Constants.JSON_TIME);
-                final ChatMessage chatMsg = new ChatMessage(uuid, msg, time);
-                TeacherClassroomActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mChatAdapter.addMessage(chatMsg);
-                    }
-                });
-            } catch (JSONException e){
-                e.printStackTrace();
-            }
+            String uuid = message.get(Constants.JSON_MSG_UUID).textValue();
+            String msg  = message.get(Constants.JSON_MSG).textValue();
+            long   time = message.get(Constants.JSON_TIME).longValue();
+            final ChatMessage chatMsg = new ChatMessage(uuid, msg, time);
+            TeacherClassroomActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mChatAdapter.addMessage(chatMsg);
+                }
+            });
         }
 
         @Override
