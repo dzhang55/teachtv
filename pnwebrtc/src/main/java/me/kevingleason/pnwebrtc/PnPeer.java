@@ -2,8 +2,9 @@ package me.kevingleason.pnwebrtc;
 
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.webrtc.DataChannel;
 import org.webrtc.IceCandidate;
 import org.webrtc.MediaStream;
@@ -102,15 +103,11 @@ public class PnPeer implements SdpObserver, PeerConnection.Observer {
     @Override
     public void onCreateSuccess(final SessionDescription sdp) {
         // TODO: modify sdp to use pcParams prefered codecs
-        try {
-            JSONObject payload = new JSONObject();
-            payload.put("type", sdp.type.canonicalForm());
-            payload.put("sdp", sdp.description);
-            pcClient.transmitMessage(id, payload);
-            pc.setLocalDescription(PnPeer.this, sdp);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        ObjectNode payload = new ObjectMapper().createObjectNode();
+        payload.put("type", sdp.type.canonicalForm());
+        payload.put("sdp", sdp.description);
+        pcClient.transmitMessage(id, payload);
+        pc.setLocalDescription(PnPeer.this, sdp);
     }
 
     @Override
@@ -150,15 +147,11 @@ public class PnPeer implements SdpObserver, PeerConnection.Observer {
 
     @Override
     public void onIceCandidate(final IceCandidate candidate) {
-        try {
-            JSONObject payload = new JSONObject();
-            payload.put("sdpMLineIndex", candidate.sdpMLineIndex);
-            payload.put("sdpMid", candidate.sdpMid);
-            payload.put("candidate", candidate.sdp);
-            pcClient.transmitMessage(id, payload);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        ObjectNode payload = new ObjectMapper().createObjectNode();
+        payload.put("sdpMLineIndex", candidate.sdpMLineIndex);
+        payload.put("sdpMid", candidate.sdpMid);
+        payload.put("candidate", candidate.sdp);
+        pcClient.transmitMessage(id, payload);
     }
 
     @Override

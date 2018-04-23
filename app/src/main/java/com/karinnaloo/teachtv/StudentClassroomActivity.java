@@ -16,6 +16,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.JsonObject;
 import com.karinnaloo.teachtv.adapters.ChatAdapter;
 import com.karinnaloo.teachtv.adt.ChatMessage;
 import com.karinnaloo.teachtv.servers.XirSysRequest;
@@ -223,15 +226,11 @@ public class StudentClassroomActivity extends ListActivity {
         if (message.equals("")) return; // Return if empty
         ChatMessage chatMsg = new ChatMessage(this.username, message, System.currentTimeMillis());
         mChatAdapter.addMessage(chatMsg);
-        JSONObject messageJSON = new JSONObject();
-        try {
-            messageJSON.put(Constants.JSON_MSG_UUID, chatMsg.getSender());
-            messageJSON.put(Constants.JSON_MSG, chatMsg.getMessage());
-            messageJSON.put(Constants.JSON_TIME, chatMsg.getTimeStamp());
-            this.pnRTCClient.transmitAll(messageJSON);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        ObjectNode messageJSON = new ObjectMapper().createObjectNode();
+        messageJSON.put(Constants.JSON_MSG_UUID, chatMsg.getSender());
+        messageJSON.put(Constants.JSON_MSG, chatMsg.getMessage());
+        messageJSON.put(Constants.JSON_TIME, chatMsg.getTimeStamp());
+        this.pnRTCClient.transmitAll(messageJSON);
         // Hide keyboard when you send a message.
         View focusView = this.getCurrentFocus();
         if (focusView != null) {

@@ -57,7 +57,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
             holder.message = (TextView) convertView.findViewById(R.id.chat_message);
             holder.timeStamp = (TextView) convertView.findViewById(R.id.chat_timestamp);
             convertView.setTag(holder);
-            Log.d("Adapter", "Recreating fadeout.");
+            Log.d("Teachtv-Adapter", "Recreating fadeout.");
         } else {
             holder = (ViewHolder) convertView.getTag();
         }

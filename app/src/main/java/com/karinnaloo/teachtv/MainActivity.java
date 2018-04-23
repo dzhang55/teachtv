@@ -13,26 +13,36 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.pubnub.api.Callback;
-import com.pubnub.api.Pubnub;
-import com.pubnub.api.PubnubError;
-import com.pubnub.api.PubnubException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.pubnub.api.PNConfiguration;
+import com.pubnub.api.PubNub;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import com.karinnaloo.teachtv.adapters.HistoryAdapter;
 import com.karinnaloo.teachtv.adt.HistoryItem;
 import com.karinnaloo.teachtv.util.Constants;
-
+import com.pubnub.api.callbacks.PNCallback;
+import com.pubnub.api.callbacks.SubscribeCallback;
+import com.pubnub.api.enums.PNStatusCategory;
+import com.pubnub.api.models.consumer.PNPublishResult;
+import com.pubnub.api.models.consumer.PNStatus;
+import com.pubnub.api.models.consumer.presence.PNGetStateResult;
+import com.pubnub.api.models.consumer.presence.PNHereNowResult;
+import com.pubnub.api.models.consumer.presence.PNSetStateResult;
+import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
+import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
 
 public class MainActivity extends ListActivity {
     private SharedPreferences mSharedPreferences;
     private String username;
     private String stdByChannel;
-    private Pubnub mPubNub;
+    private PubNub mPubNub;
+    private StandbyListener mStandbyListener;
 
     private ListView mHistoryList;
     private HistoryAdapter mHistoryAdapter;
@@ -61,8 +71,10 @@ public class MainActivity extends ListActivity {
         this.mUsernameTV.setText(this.username);
         initPubNub();
 
-        this.mHistoryAdapter = new HistoryAdapter(this, new ArrayList<HistoryItem>(), this.mPubNub);
+        this.mHistoryAdapter = new HistoryAdapter(this, new ArrayList<HistoryItem>(), this.mPubNub, this.username);
         this.mHistoryList.setAdapter(this.mHistoryAdapter);
+        this.mStandbyListener = new StandbyListener();
+        this.mPubNub.addListener(this.mStandbyListener);
     }
 
 
@@ -95,7 +107,8 @@ public class MainActivity extends ListActivity {
     protected void onStop() {
         super.onStop();
         if(this.mPubNub!=null){
-            this.mPubNub.unsubscribeAll();
+            // TODO: kloo unsubscribe all
+            this.mPubNub.unsubscribe();
         }
     }
 
@@ -113,8 +126,12 @@ public class MainActivity extends ListActivity {
      * Subscribe to standby channel so that it doesn't interfere with the WebRTC Signaling.
      */
     public void initPubNub(){
-        this.mPubNub  = new Pubnub(Constants.PUB_KEY, Constants.SUB_KEY);
-        this.mPubNub.setUUID(this.username);
+        PNConfiguration config = new PNConfiguration()
+                .setPublishKey(Constants.PUB_KEY)
+                .setSubscribeKey(Constants.SUB_KEY)
+                .setUuid(this.username)
+                .setSecure(true);
+        this.mPubNub = new PubNub(config);
         subscribeStdBy();
     }
 
@@ -122,37 +139,8 @@ public class MainActivity extends ListActivity {
      * Subscribe to standby channel
      */
     private void subscribeStdBy(){
-        try {
-            this.mPubNub.subscribe(this.stdByChannel, new Callback() {
-                @Override
-                public void successCallback(String channel, Object message) {
-                    Log.d("MA-iPN", "MESSAGE: " + message.toString());
-                    if (!(message instanceof JSONObject)) return; // Ignore if not JSONObject
-                    JSONObject jsonMsg = (JSONObject) message;
-                    try {
-                        if (!jsonMsg.has(Constants.JSON_CALL_USER)) return;     //Ignore Signaling messages.
-                        String user = jsonMsg.getString(Constants.JSON_CALL_USER);
-                        dispatchIncomingCall(user);
-                    } catch (JSONException e){
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void connectCallback(String channel, Object message) {
-                    Log.d("MA-iPN", "CONNECTED: " + message.toString());
-                    setUserStatus(Constants.STATUS_AVAILABLE);
-                }
-
-                @Override
-                public void errorCallback(String channel, PubnubError error) {
-                    Log.d("MA-iPN","ERROR: " + error.toString());
-                }
-            });
-        } catch (PubnubException e){
-            Log.d("HERE","HEREEEE");
-            e.printStackTrace();
-        }
+        Log.d("Teachtv-MainActivity", "subscribe: " + this.stdByChannel);
+        this.mPubNub.subscribe().channels(Arrays.asList(this.stdByChannel)).execute();
     }
 
     /**
@@ -179,32 +167,34 @@ public class MainActivity extends ListActivity {
      */
     public void dispatchCall(final String callNum){
         final String callNumStdBy = callNum + Constants.STDBY_SUFFIX;
-        this.mPubNub.hereNow(callNumStdBy, new Callback() {
+        this.mPubNub.hereNow().channels(Arrays.asList(callNumStdBy)).async(new PNCallback<PNHereNowResult>() {
             @Override
-            public void successCallback(String channel, Object message) {
-                Log.d("MA-dC", "HERE_NOW: " +" CH - " + callNumStdBy + " " + message.toString());
-                try {
-                    int occupancy = ((JSONObject) message).getInt(Constants.JSON_OCCUPANCY);
-                    if (occupancy == 0) {
-                        showToast("User is not online!");
-                        return;
-                    }
-                    JSONObject jsonCall = new JSONObject();
-                    jsonCall.put(Constants.JSON_CALL_USER, username);
-                    jsonCall.put(Constants.JSON_CALL_TIME, System.currentTimeMillis());
-                    mPubNub.publish(callNumStdBy, jsonCall, new Callback() {
-                        @Override
-                        public void successCallback(String channel, Object message) {
-                            Log.d("MA-dC", "SUCCESS: " + message.toString());
-                            Intent intent = new Intent(MainActivity.this, StudentClassroomActivity.class);
-                            intent.putExtra(Constants.USER_NAME, username);
-                            intent.putExtra(Constants.CALL_USER, callNum);  // Only accept from this number?
-                            startActivity(intent);
-                        }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            public void onResponse(PNHereNowResult result, PNStatus status) {
+                Log.d("Teachtv-MainActivity", "HERE_NOW: " +" CH - " + callNumStdBy + " " + result.toString());
+                int occupancy = result.getTotalOccupancy();
+                if (occupancy == 0) {
+                    showToast("User is not online!");
+                    return;
                 }
+                ObjectNode jsonCall = new ObjectMapper().createObjectNode();
+                jsonCall.put(Constants.JSON_CALL_USER, username);
+                jsonCall.put(Constants.JSON_CALL_TIME, System.currentTimeMillis());
+                Log.d("Teachtv-MainActivity", "publish: " + callNumStdBy + "jsonCall: " + jsonCall.toString());
+                mPubNub.publish().message(jsonCall).channel(callNumStdBy).async(new PNCallback<PNPublishResult>() {
+                    @Override
+                    public void onResponse(PNPublishResult result, PNStatus status) {
+                        if (status.isError()) {
+                            Log.e("Teachtv-MainActivity", "standby error: " + status.getCategory().name());
+                            return;
+                        }
+                        Log.d("Teachtv-MainActivity", "SUCCESS: " + result.toString());
+                        Intent intent = new Intent(MainActivity.this, StudentClassroomActivity.class);
+                        intent.putExtra(Constants.USER_NAME, username);
+                        intent.putExtra(Constants.CALL_USER, callNum);  // Only accept from this number?
+                        intent.putExtra("dialed", true);
+                        startActivity(intent);
+                    }
+                });
             }
         });
     }
@@ -223,28 +213,33 @@ public class MainActivity extends ListActivity {
     }
 
     private void setUserStatus(String status){
-        try {
-            JSONObject state = new JSONObject();
-            state.put(Constants.JSON_STATUS, status);
-            this.mPubNub.setState(this.stdByChannel, this.username, state, new Callback() {
-                @Override
-                public void successCallback(String channel, Object message) {
-                    Log.d("MA-sUS","State Set: " + message.toString());
-                }
-            });
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
+        HashMap<String, String> stateMap = new HashMap<String, String>();
+        stateMap.put(Constants.JSON_STATUS, status);
+        // Sets state for uuid to be stateMap.
+        this.mPubNub.setPresenceState()
+                .channels(Arrays.asList(this.stdByChannel))
+                .state(stateMap)
+                .uuid(this.username)
+                .async(new PNCallback<PNSetStateResult>() {
+                    @Override
+                    public void onResponse(PNSetStateResult result, PNStatus status) {
+                        Log.d("Teachtv-MainActivity","State Set: " + status.toString());
+                    }
+        });
     }
 
     private void getUserStatus(String userId){
+        final String userIdCopy = userId;
         String stdByUser = userId + Constants.STDBY_SUFFIX;
-        this.mPubNub.getState(stdByUser, userId, new Callback() {
-            @Override
-            public void successCallback(String channel, Object message) {
-                Log.d("MA-gUS", "User Status: " + message.toString());
-            }
-        });
+        this.mPubNub.getPresenceState()
+                .channels(Arrays.asList(stdByUser))
+                .uuid(userId)
+                .async(new PNCallback<PNGetStateResult>() {
+                    @Override
+                    public void onResponse(PNGetStateResult result, PNStatus status) {
+                        Log.d("Teachtv-MainActivity","Get State: " + result.getStateByUUID().get(userIdCopy));
+                    }
+                });
     }
 
     /**
@@ -265,12 +260,36 @@ public class MainActivity extends ListActivity {
      *   to the LoginActivity
      */
     public void signOut(){
-        this.mPubNub.unsubscribeAll();
+        // TODO: kloo unsub all
+        this.mPubNub.unsubscribe();
         SharedPreferences.Editor edit = this.mSharedPreferences.edit();
         edit.remove(Constants.USER_NAME);
         edit.apply();
         Intent intent = new Intent(this, LoginActivity.class);
         intent.putExtra("oldUsername", this.username);
         startActivity(intent);
+    }
+
+    private class StandbyListener extends SubscribeCallback {
+        @Override
+        public void status(PubNub pubnub, PNStatus status) {
+            if (status.getCategory() == PNStatusCategory.PNConnectedCategory) {
+                setUserStatus(Constants.STATUS_AVAILABLE);
+            }
+        }
+
+        @Override
+        public void message(PubNub pubnub, PNMessageResult message) {
+            Log.d("Teachtv-MainActivity", "MESSAGE: " + message.toString());
+            JsonNode jsonMsg = message.getMessage();
+            if (!jsonMsg.has(Constants.JSON_CALL_USER)) return;     //Ignore Signaling messages.
+            String user = jsonMsg.get(Constants.JSON_CALL_USER).textValue();
+            dispatchIncomingCall(user);
+        }
+
+        @Override
+        public void presence(PubNub pubnub, PNPresenceEventResult presence) {
+
+        }
     }
 }
